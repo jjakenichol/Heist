@@ -35,7 +35,12 @@ public class DrawComponent extends Activity implements OnTouchListener, View.OnC
   int defaultColor = Color.GREEN;
   int blockColor = Color.BLUE;
   int defaultStrokeWidth = 5;
-  int gridStrokeWidth = 2;
+  int gridStrokeWidth = 3;
+  int gridSizeSmall = 20;
+  int gridSizeMedium = 10;
+  int gridSizeLarge = 5;
+  int gridSizeCurrent = gridSizeSmall;
+
   Paint.Style defaultStyle = Paint.Style.STROKE;
 
   @Override
@@ -51,8 +56,8 @@ public class DrawComponent extends Activity implements OnTouchListener, View.OnC
     displayWidth = imageViewSize.x;
     displayHeight = imageViewSize.y;
 
-    gridX = (int) displayWidth / 10;
-    gridY = (int) displayHeight / 10;
+    gridX = (int) displayWidth / gridSizeCurrent;
+    gridY = (int) displayHeight / gridSizeCurrent;
     grid = new Rect[gridX][gridY];
     for (int i = 0; i < gridX; i++)
     {
@@ -89,6 +94,7 @@ public class DrawComponent extends Activity implements OnTouchListener, View.OnC
     imageView.setOnTouchListener(this);
   }
 
+  @Override
   public boolean onTouch(View v, MotionEvent event)
   {
     switch (event.getAction())
