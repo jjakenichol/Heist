@@ -4,7 +4,8 @@
     <string name="app_name">Heist</string>
     <string name="edit_message">Enter a Message</string>
     <string name="action_settings">Settings</string>
-    <string name="button_send">Send</string>
+    <string name="button_play">Play</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_display_message">MyMessage</string>
 
 </resources>
