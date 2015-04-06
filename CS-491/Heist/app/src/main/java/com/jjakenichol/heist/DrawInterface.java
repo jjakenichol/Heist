@@ -21,27 +21,23 @@ import java.util.LinkedList;
 
 public class DrawInterface extends Activity implements OnTouchListener, View.OnClickListener
 {
-  ImageView imageView;
-  Bitmap bitmap;
-  Canvas canvas;
-  Paint paint;
-  Path path = new Path();
-  LinkedList<FloatPoint> points = new LinkedList<>();
-  Rect grid[][];
-  int gridX;
-  int gridY;
-  float displayWidth;
-  float displayHeight;
-  int defaultColor = Color.GREEN;
-  int blockColor = Color.BLUE;
-  int defaultStrokeWidth = 5;
-  int gridStrokeWidth = 3;
-  int gridSizeSmall = 20;
-  //  int gridSizeMedium = 10;
-//  int gridSizeLarge = 5;
-  int gridSizeCurrent = gridSizeSmall;
+  private ImageView imageView;
+  private Bitmap bitmap;
+  private Canvas canvas;
+  private Paint paint;
+  private Path path = new Path();
+  private LinkedList<FloatPoint> points = new LinkedList<>();
+  private Rect grid[][];
+  private int gridX;
+  private int gridY;
+  private float displayWidth;
+  private float displayHeight;
+  private int defaultColor = Color.GREEN;
+  private int defaultStrokeWidth = 5;
+  private int gridStrokeWidth = 3;
+  private int gridSize = 20;
 
-  Paint.Style defaultStyle = Paint.Style.STROKE;
+  private Paint.Style defaultStyle = Paint.Style.STROKE;
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -56,8 +52,9 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     displayWidth = imageViewSize.x;
     displayHeight = imageViewSize.y;
 
-    gridX = (int) displayWidth / gridSizeCurrent;
-    gridY = (int) displayHeight / gridSizeCurrent;
+    // Create Grid
+    gridX = (int) displayWidth / gridSize;
+    gridY = (int) displayHeight / gridSize;
     grid = new Rect[gridX][gridY];
     for (int i = 0; i < gridX; i++)
     {
@@ -79,6 +76,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     paint.setColor(defaultColor);
     imageView.setImageBitmap(bitmap);
 
+    // Draw Grid
     for (int i = 0; i < gridX; i++)
     {
       for (int j = 0; j < gridY; j++)
@@ -100,6 +98,8 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     switch (event.getAction())
     {
       case MotionEvent.ACTION_DOWN:
+        points.add(new FloatPoint(event.getX(), event.getY()));
+        draw();
         break;
       case MotionEvent.ACTION_MOVE:
         points.add(new FloatPoint(event.getX(), event.getY()));
@@ -109,22 +109,6 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
         points.clear();
         break;
     }
-
-    for (int i = 0; i < gridX; i++)
-    {
-      for (int j = 0; j < gridY; j++)
-      {
-        if (grid[i][j].contains((int) event.getX(), (int) event.getY()))
-        {
-          paint.setColor(blockColor);
-          paint.setStyle(Paint.Style.FILL);
-          canvas.drawRect(grid[i][j], paint);
-        }
-      }
-    }
-
-    paint.setColor(defaultColor);
-    paint.setStyle(defaultStyle);
 
     return true;
   }
