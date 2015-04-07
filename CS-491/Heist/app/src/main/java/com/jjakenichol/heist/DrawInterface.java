@@ -36,10 +36,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
   int blockColor = Color.BLUE;
   int defaultStrokeWidth = 5;
   int gridStrokeWidth = 3;
-  int gridSizeSmall = 20;
-  //  int gridSizeMedium = 10;
-//  int gridSizeLarge = 5;
-  int gridSizeCurrent = gridSizeSmall;
+  int gridSize = 20;
 
   Paint.Style defaultStyle = Paint.Style.STROKE;
 
@@ -56,8 +53,8 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     displayWidth = imageViewSize.x;
     displayHeight = imageViewSize.y;
 
-    gridX = (int) displayWidth / gridSizeCurrent;
-    gridY = (int) displayHeight / gridSizeCurrent;
+    gridX = (int) displayWidth / gridSize;
+    gridY = (int) displayHeight / gridSize;
     grid = new Rect[gridX][gridY];
     for (int i = 0; i < gridX; i++)
     {
