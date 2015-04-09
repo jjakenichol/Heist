@@ -23,21 +23,22 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
 {
   private ImageView imageView;
   private Bitmap bitmap;
-  private Canvas canvas;
-  private Paint paint;
+  public static Canvas canvas;
+  public static Paint paint;
   private Path path = new Path();
-  private LinkedList<FloatPoint> points = new LinkedList<>();
   private Rect grid[][];
+  private Paint.Style defaultStyle = Paint.Style.STROKE;
   private int gridX;
   private int gridY;
-  private float displayWidth;
-  private float displayHeight;
   private int defaultColor = Color.GREEN;
   private int defaultStrokeWidth = 5;
   private int gridStrokeWidth = 3;
   private int gridSize = 20;
 
-  private Paint.Style defaultStyle = Paint.Style.STROKE;
+  private static LinkedList<FloatPoint> points = new LinkedList<>();
+
+  public static float displayWidth;
+  public static float displayHeight;
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -51,6 +52,14 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     this.getWindowManager().getDefaultDisplay().getSize(imageViewSize);
     displayWidth = imageViewSize.x;
     displayHeight = imageViewSize.y;
+
+    bitmap = Bitmap.createBitmap((int) displayWidth, (int) displayHeight, Bitmap.Config.ARGB_8888);
+    canvas = new Canvas(bitmap);
+    paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    paint.setStyle(defaultStyle);
+    paint.setStrokeWidth(gridStrokeWidth);
+    paint.setColor(defaultColor);
+    imageView.setImageBitmap(bitmap);
 
     // Create Grid
     gridX = (int) displayWidth / gridSize;
@@ -68,14 +77,6 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
       }
     }
 
-    bitmap = Bitmap.createBitmap((int) displayWidth, (int) displayHeight, Bitmap.Config.ARGB_8888);
-    canvas = new Canvas(bitmap);
-    paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    paint.setStyle(defaultStyle);
-    paint.setStrokeWidth(gridStrokeWidth);
-    paint.setColor(defaultColor);
-    imageView.setImageBitmap(bitmap);
-
     // Draw Grid
     for (int i = 0; i < gridX; i++)
     {
@@ -90,6 +91,9 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     button.setOnClickListener(this);
 
     imageView.setOnTouchListener(this);
+
+    // Create Game
+    new Game(DrawInterface.canvas, DrawInterface.paint).start();
   }
 
   @Override
@@ -98,12 +102,12 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     switch (event.getAction())
     {
       case MotionEvent.ACTION_DOWN:
-        points.add(new FloatPoint(event.getX(), event.getY()));
-        draw();
+        points.add(new FloatPoint(event.getRawX(), event.getRawY()));
+        drawPath();
         break;
       case MotionEvent.ACTION_MOVE:
-        points.add(new FloatPoint(event.getX(), event.getY()));
-        draw();
+        points.add(new FloatPoint(event.getRawX(), event.getRawY()));
+        drawPath();
         break;
       case MotionEvent.ACTION_UP:
         points.clear();
@@ -111,25 +115,6 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     }
 
     return true;
-  }
-
-  private void draw()
-  {
-    boolean isFirst = true;
-    for (FloatPoint point : points)
-    {
-      if (isFirst)
-      {
-        isFirst = false;
-        path.moveTo(point.x, point.y);
-      }
-      else
-      {
-        path.lineTo(point.x, point.y);
-      }
-    }
-    canvas.drawPath(path, paint);
-    imageView.invalidate();
   }
 
   @Override
@@ -156,15 +141,33 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     imageView.invalidate();
   }
 
-
-  class FloatPoint
+  private void drawPath()
   {
-    public float x, y;
-
-    public FloatPoint(float x, float y)
+    boolean isFirst = true;
+    for (FloatPoint point : points)
     {
-      this.x = x;
-      this.y = y;
+      if (isFirst)
+      {
+        isFirst = false;
+        path.moveTo(point.x, point.y);
+      }
+      else
+      {
+        path.lineTo(point.x, point.y);
+      }
     }
+    canvas.drawPath(path, paint);
+    imageView.invalidate();
   }
+
+  /**
+   * Gets the path points.
+   *
+   * @return a linked list of points
+   */
+  public static LinkedList<FloatPoint> getPoints()
+  {
+    return points;
+  }
+
 }
