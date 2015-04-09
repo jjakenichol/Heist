@@ -1,6 +1,6 @@
 package com.jjakenichol.heist;
 
-import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import java.util.LinkedList;
@@ -10,50 +10,44 @@ import java.util.LinkedList;
  */
 public class Player
 {
-  private float x, y = -1;
+  private FloatPoint position;
   private int size = -1;
+  private LinkedList<FloatPoint> points;
 
-  public Player(float x, float y, int size)
+  public Player(float x, float y, int size, LinkedList<FloatPoint> points)
   {
-    this.x = x;
-    this.y = y;
+    this.position = new FloatPoint(x, y);
     this.size = size;
+    this.points = points;
   }
 
-  public void update(LinkedList<FloatPoint> points)
+  public void update()
   {
-    if (points.peek() != null)
+    if (!points.isEmpty())
     {
-      this.x = points.peek().x;
-      this.y = points.peek().y;
+      position = points.pop();
+      DrawInterface.clear();
+      DrawInterface.drawPath();
     }
   }
 
-  public void draw(Canvas canvas, Paint paint)
+  public void draw()
   {
-    canvas.drawCircle(this.x, this.y, size, paint);
-  }
-
-  // Getters
-
-  /**
-   * Gets this Player's x location.
-   *
-   * @return this player's x
-   */
-  public float getX()
-  {
-    return this.x;
+    DrawInterface.paint.setStyle(Paint.Style.FILL);
+    DrawInterface.paint.setColor(Color.GREEN);
+    DrawInterface.canvas.drawCircle(position.x, position.y, size, DrawInterface.paint);
+    DrawInterface.paint.setColor(Color.BLACK);
+    DrawInterface.canvas.drawCircle(position.x, position.y, size - (int)(size * 0.3), DrawInterface.paint);
   }
 
   /**
-   * Gets this Player's y location.
+   * Gets this Player's x y position.
    *
-   * @return this player's y
+   * @return this player's position
    */
-  public float getY()
+  public FloatPoint getPosition()
   {
-    return this.y;
+    return this.position;
   }
 
   /**
@@ -73,7 +67,7 @@ public class Player
    */
   public void setX(float x)
   {
-    this.x = x;
+    this.position.x = x;
   }
 
   /**
@@ -83,7 +77,7 @@ public class Player
    */
   public void setY(float y)
   {
-    this.y = y;
+    this.position.y = y;
   }
 
   /**

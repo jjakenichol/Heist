@@ -21,22 +21,21 @@ import java.util.LinkedList;
 
 public class DrawInterface extends Activity implements OnTouchListener, View.OnClickListener
 {
-  private ImageView imageView;
   private Bitmap bitmap;
-  public static Canvas canvas;
-  public static Paint paint;
-  private Path path = new Path();
   private Rect grid[][];
   private Paint.Style defaultStyle = Paint.Style.STROKE;
   private int gridX;
   private int gridY;
   private int defaultColor = Color.GREEN;
   private int defaultStrokeWidth = 5;
-  private int gridStrokeWidth = 3;
-  private int gridSize = 20;
+  private boolean isTouchingScreen = false;
 
   private static LinkedList<FloatPoint> points = new LinkedList<>();
+  private static ImageView imageView;
+  private static Path path = new Path();
 
+  public static Canvas canvas;
+  public static Paint paint;
   public static float displayWidth;
   public static float displayHeight;
 
@@ -57,10 +56,78 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     canvas = new Canvas(bitmap);
     paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     paint.setStyle(defaultStyle);
-    paint.setStrokeWidth(gridStrokeWidth);
     paint.setColor(defaultColor);
+    paint.setStrokeWidth(defaultStrokeWidth);
     imageView.setImageBitmap(bitmap);
 
+    final Button button = (Button) findViewById(R.id.clearButton);
+    button.setOnClickListener(this);
+
+    imageView.setOnTouchListener(this);
+
+    // Start Game
+    new Game().start();
+  }
+
+  @Override
+  public boolean onTouch(View v, MotionEvent event)
+  {
+    switch (event.getAction())
+    {
+      case MotionEvent.ACTION_DOWN:
+        isTouchingScreen = true;
+        break;
+      case MotionEvent.ACTION_MOVE:
+        points.add(new FloatPoint(event.getRawX(), event.getRawY()));
+        isTouchingScreen = true;
+        break;
+      case MotionEvent.ACTION_UP:
+        isTouchingScreen = false;
+        break;
+    }
+    drawPath();
+
+    return isTouchingScreen;
+  }
+
+  @Override
+  public void onClick(View v)
+  {
+    clear();
+  }
+
+  public static void clear()
+  {
+    path = new Path();
+    canvas.drawColor(Color.parseColor("#050490"));
+  }
+
+  public static void drawPath()
+  {
+    boolean isFirst = true;
+    for (FloatPoint point : points)
+    {
+      if (isFirst)
+      {
+        isFirst = false;
+        path.moveTo(point.x, point.y);
+      }
+      else
+      {
+        path.lineTo(point.x, point.y);
+      }
+    }
+    DrawInterface.paint.setColor(Color.GREEN);
+    DrawInterface.paint.setStyle(Paint.Style.STROKE);
+    canvas.drawPath(path, paint);
+    imageView.postInvalidate();
+  }
+
+  public void drawGrid()
+  {
+    int gridStrokeWidth = 3;
+    int gridSize = 20;
+    
     // Create Grid
     gridX = (int) displayWidth / gridSize;
     gridY = (int) displayHeight / gridSize;
@@ -78,56 +145,6 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     }
 
     // Draw Grid
-    for (int i = 0; i < gridX; i++)
-    {
-      for (int j = 0; j < gridY; j++)
-      {
-        canvas.drawRect(grid[i][j], paint);
-      }
-    }
-    paint.setStrokeWidth(defaultStrokeWidth);
-
-    final Button button = (Button) findViewById(R.id.clearButton);
-    button.setOnClickListener(this);
-
-    imageView.setOnTouchListener(this);
-
-    // Create Game
-    new Game(DrawInterface.canvas, DrawInterface.paint).start();
-  }
-
-  @Override
-  public boolean onTouch(View v, MotionEvent event)
-  {
-    switch (event.getAction())
-    {
-      case MotionEvent.ACTION_DOWN:
-        points.add(new FloatPoint(event.getRawX(), event.getRawY()));
-        drawPath();
-        break;
-      case MotionEvent.ACTION_MOVE:
-        points.add(new FloatPoint(event.getRawX(), event.getRawY()));
-        drawPath();
-        break;
-      case MotionEvent.ACTION_UP:
-        points.clear();
-        break;
-    }
-
-    return true;
-  }
-
-  @Override
-  public void onClick(View v)
-  {
-    clear();
-  }
-
-  private void clear()
-  {
-    path = new Path();
-    canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-
     paint.setStrokeWidth(gridStrokeWidth);
     for (int i = 0; i < gridX; i++)
     {
@@ -137,27 +154,6 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
       }
     }
     paint.setStrokeWidth(defaultStrokeWidth);
-
-    imageView.invalidate();
-  }
-
-  private void drawPath()
-  {
-    boolean isFirst = true;
-    for (FloatPoint point : points)
-    {
-      if (isFirst)
-      {
-        isFirst = false;
-        path.moveTo(point.x, point.y);
-      }
-      else
-      {
-        path.lineTo(point.x, point.y);
-      }
-    }
-    canvas.drawPath(path, paint);
-    imageView.invalidate();
   }
 
   /**
