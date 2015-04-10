@@ -27,6 +27,11 @@ public class Map
     Wall wall3b = new Wall(DrawInterface.displayWidth - 2 * offset, 0 + 2 * offset, Orientation.Vertical, DrawInterface.displayHeight - 1 - 4 * offset);
     Wall wall4b = new Wall(0 + 2 * offset, DrawInterface.displayHeight - 2 * offset, Orientation.Horizontal, DrawInterface.displayWidth - 4 * offset);
 
+    Wall wall1c = new Wall(1050, 650, Orientation.Horizontal, DrawInterface.displayWidth - 1400);
+    Wall wall2c = new Wall(1050, 775, Orientation.Horizontal, DrawInterface.displayWidth - 1400);
+    Wall wall3c = new Wall(1050, 650, Orientation.Vertical, 125);
+    Wall wall4c = new Wall(DrawInterface.displayWidth - 4 * offset, 800, Orientation.Vertical, DrawInterface.displayHeight - 1 - 1600);
+
     walls.add(borderWall1);
     walls.add(borderWall2);
     walls.add(borderWall3);
@@ -41,6 +46,11 @@ public class Map
     walls.add(wall2b);
     walls.add(wall3b);
     walls.add(wall4b);
+
+    walls.add(wall1c);
+    walls.add(wall2c);
+    walls.add(wall3c);
+    walls.add(wall4c);
   }
 
   public void draw()
