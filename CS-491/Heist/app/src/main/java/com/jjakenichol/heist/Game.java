@@ -9,7 +9,7 @@ public class Game extends Thread
 
   public Game()
   {
-    player = new Player(DrawInterface.displayWidth / 2, DrawInterface.displayHeight / 2, 50, DrawInterface.getPoints());
+    player = new Player(DrawInterface.displayWidth / 2, DrawInterface.displayHeight / 2, Constants.playerSize, DrawInterface.getPoints());
     player.draw();
   }
 
@@ -20,7 +20,7 @@ public class Game extends Thread
     {
       player.draw();
 
-      if (System.currentTimeMillis() % 500 == 0)
+      if (System.currentTimeMillis() % 50 == 0 && !DrawInterface.isDrawing)
       {
         player.update();
       }

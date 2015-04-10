@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -23,21 +22,20 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
 {
   private Bitmap bitmap;
   private Rect grid[][];
-  private Paint.Style defaultStyle = Paint.Style.STROKE;
   private int gridX;
   private int gridY;
-  private int defaultColor = Color.GREEN;
-  private int defaultStrokeWidth = 5;
   private boolean isTouchingScreen = false;
 
   private static LinkedList<FloatPoint> points = new LinkedList<>();
   private static ImageView imageView;
   private static Path path = new Path();
+  private static Map map;
 
   public static Canvas canvas;
   public static Paint paint;
   public static float displayWidth;
   public static float displayHeight;
+  public static boolean isDrawing = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -55,15 +53,16 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     bitmap = Bitmap.createBitmap((int) displayWidth, (int) displayHeight, Bitmap.Config.ARGB_8888);
     canvas = new Canvas(bitmap);
     paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    paint.setStyle(defaultStyle);
-    paint.setColor(defaultColor);
-    paint.setStrokeWidth(defaultStrokeWidth);
     imageView.setImageBitmap(bitmap);
 
-    final Button button = (Button) findViewById(R.id.clearButton);
-    button.setOnClickListener(this);
+//    final Button button = (Button) findViewById(R.id.clearButton);
+//    button.setOnClickListener(this);
 
     imageView.setOnTouchListener(this);
+
+    // Draw Map
+    map = new Map();
+    map.draw();
 
     // Start Game
     new Game().start();
@@ -100,11 +99,13 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
   {
     path = new Path();
     canvas.drawColor(Color.parseColor("#050490"));
+    map.draw();
   }
 
   public static void drawPath()
   {
     boolean isFirst = true;
+    isDrawing = true;
     for (FloatPoint point : points)
     {
       if (isFirst)
@@ -117,17 +118,21 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
         path.lineTo(point.x, point.y);
       }
     }
-    DrawInterface.paint.setColor(Color.GREEN);
+    DrawInterface.paint.setColor(Constants.pathColor);
+    DrawInterface.paint.setStrokeWidth(Constants.pathWidth);
     DrawInterface.paint.setStyle(Paint.Style.STROKE);
     canvas.drawPath(path, paint);
+    DrawInterface.paint.reset();
+
     imageView.postInvalidate();
+    isDrawing = false;
   }
 
   public void drawGrid()
   {
-    int gridStrokeWidth = 3;
+    int gridStrokeWidth = Constants.wallWidth;
     int gridSize = 20;
-    
+
     // Create Grid
     gridX = (int) displayWidth / gridSize;
     gridY = (int) displayHeight / gridSize;
@@ -153,7 +158,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
         canvas.drawRect(grid[i][j], paint);
       }
     }
-    paint.setStrokeWidth(defaultStrokeWidth);
+    DrawInterface.paint.reset();
   }
 
   /**

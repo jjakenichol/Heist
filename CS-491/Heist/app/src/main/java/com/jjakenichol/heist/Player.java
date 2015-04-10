@@ -1,6 +1,5 @@
 package com.jjakenichol.heist;
 
-import android.graphics.Color;
 import android.graphics.Paint;
 
 import java.util.LinkedList;
@@ -10,8 +9,8 @@ import java.util.LinkedList;
  */
 public class Player
 {
-  private FloatPoint position;
   private int size = -1;
+  private FloatPoint position;
   private LinkedList<FloatPoint> points;
 
   public Player(float x, float y, int size, LinkedList<FloatPoint> points)
@@ -34,10 +33,11 @@ public class Player
   public void draw()
   {
     DrawInterface.paint.setStyle(Paint.Style.FILL);
-    DrawInterface.paint.setColor(Color.GREEN);
+    DrawInterface.paint.setColor(Constants.playerColor);
     DrawInterface.canvas.drawCircle(position.x, position.y, size, DrawInterface.paint);
-    DrawInterface.paint.setColor(Color.BLACK);
-    DrawInterface.canvas.drawCircle(position.x, position.y, size - (int)(size * 0.3), DrawInterface.paint);
+//    DrawInterface.paint.setColor(Color.BLACK);
+//    DrawInterface.canvas.drawCircle(position.x, position.y, size - (int)(size * 0.3), DrawInterface.paint);
+    DrawInterface.paint.reset();
   }
 
   /**
