@@ -12,10 +12,10 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class DrawInterface extends Activity implements OnTouchListener, View.OnClickListener
@@ -26,7 +26,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
   private int gridY;
   private boolean isTouchingScreen = false;
 
-  private static LinkedList<FloatPoint> points = new LinkedList<>();
+  private static ConcurrentLinkedQueue<FloatPoint> points = new ConcurrentLinkedQueue<>();
   private static ImageView imageView;
   private static Path path = new Path();
   private static Map map;
@@ -35,7 +35,6 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
   public static Paint paint;
   public static float displayWidth;
   public static float displayHeight;
-  public static boolean isDrawing = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -65,7 +64,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     map.draw();
 
     // Start Game
-    new Game().start();
+    new Game(map).start();
   }
 
   @Override
@@ -77,7 +76,8 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
         isTouchingScreen = true;
         break;
       case MotionEvent.ACTION_MOVE:
-        points.add(new FloatPoint(event.getRawX(), event.getRawY()));
+        FloatPoint point = new FloatPoint(event.getRawX(), event.getRawY());
+        if (!map.isInWall(point)) points.add(point);
         isTouchingScreen = true;
         break;
       case MotionEvent.ACTION_UP:
@@ -105,7 +105,6 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
   public static void drawPath()
   {
     boolean isFirst = true;
-    isDrawing = true;
     for (FloatPoint point : points)
     {
       if (isFirst)
@@ -118,19 +117,18 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
         path.lineTo(point.x, point.y);
       }
     }
-    DrawInterface.paint.setColor(Constants.pathColor);
-    DrawInterface.paint.setStrokeWidth(Constants.pathWidth);
+    DrawInterface.paint.setColor(Constants.PATH_COLOR);
+    DrawInterface.paint.setStrokeWidth(Constants.PATH_WIDTH);
     DrawInterface.paint.setStyle(Paint.Style.STROKE);
     canvas.drawPath(path, paint);
     DrawInterface.paint.reset();
 
     imageView.postInvalidate();
-    isDrawing = false;
   }
 
   public void drawGrid()
   {
-    int gridStrokeWidth = Constants.wallWidth;
+    int gridStrokeWidth = Constants.WALL_WIDTH;
     int gridSize = 20;
 
     // Create Grid
@@ -166,7 +164,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
    *
    * @return a linked list of points
    */
-  public static LinkedList<FloatPoint> getPoints()
+  public static ConcurrentLinkedQueue<FloatPoint> getPoints()
   {
     return points;
   }

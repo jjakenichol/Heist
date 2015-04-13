@@ -7,9 +7,9 @@ public class Game extends Thread
 {
   private Player player;
 
-  public Game()
+  public Game(Map map)
   {
-    player = new Player(DrawInterface.displayWidth / 2, DrawInterface.displayHeight / 2, Constants.playerSize, DrawInterface.getPoints());
+    player = new Player(map, DrawInterface.displayWidth / 2, DrawInterface.displayHeight / 2, Constants.PLAYER_SIZE, DrawInterface.getPoints());
     player.draw();
   }
 
@@ -20,7 +20,7 @@ public class Game extends Thread
     {
       player.draw();
 
-      if (System.currentTimeMillis() % 50 == 0 && !DrawInterface.isDrawing)
+      if (System.currentTimeMillis() % 50 == 0)
       {
         player.update();
       }

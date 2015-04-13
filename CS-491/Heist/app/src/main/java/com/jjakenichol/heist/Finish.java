@@ -1,25 +1,22 @@
 package com.jjakenichol.heist;
 
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 /**
- * Created by JakeNichol on 4/9/15.
+ * Created by JakeNichol on 4/13/15.
  */
-public class Wall
+public class Finish
 {
   private Rect rect;
-  private int left, top, length = -1;
+  private int left, top = -1;
 
-  public Wall(int left, int top, Orientation orientation, int length)
+  public Finish(int left, int top, int right, int bottom)
   {
     this.left = left;
     this.top = top;
-    this.length = length;
 
-    rect = new Rect(left, top, left + Constants.WALL_WIDTH, top + Constants.WALL_WIDTH);
-
-    if (orientation == Orientation.Horizontal) rect.right = left + length;
-    else rect.bottom = top + length;
+    rect = new Rect(left, top, right, bottom);
 
     // Adjust to scale
     rect.left = (int) (rect.left * Constants.SCALE);
@@ -31,8 +28,14 @@ public class Wall
   public void draw()
   {
     DrawInterface.paint.setStrokeWidth(Constants.WALL_WIDTH);
-    DrawInterface.paint.setColor(Constants.WALL_COLOR);
+    DrawInterface.paint.setColor(Constants.FINISH_COLOR);
+    DrawInterface.paint.setStyle(Paint.Style.STROKE);
     DrawInterface.canvas.drawRect(rect, DrawInterface.paint);
+    DrawInterface.paint.reset();
+
+    DrawInterface.paint.setColor(Constants.FINISH_COLOR);
+    DrawInterface.paint.setTextSize(Constants.FINISH_TEXT_SIZE * Constants.SCALE);
+    DrawInterface.canvas.drawText("END", rect.left, rect.bottom + DrawInterface.paint.getTextSize(), DrawInterface.paint);
     DrawInterface.paint.reset();
   }
 
@@ -49,10 +52,5 @@ public class Wall
   public int getTop()
   {
     return this.top;
-  }
-
-  public int getLength()
-  {
-    return this.length;
   }
 }

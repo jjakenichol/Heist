@@ -3,6 +3,7 @@ package com.jjakenichol.heist;
 import android.graphics.Paint;
 
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by JakeNichol on 4/5/15.
@@ -10,11 +11,13 @@ import java.util.LinkedList;
 public class Player
 {
   private int size = -1;
+  private Map map;
   private FloatPoint position;
-  private LinkedList<FloatPoint> points;
+  private ConcurrentLinkedQueue<FloatPoint> points;
 
-  public Player(float x, float y, int size, LinkedList<FloatPoint> points)
+  public Player(Map map, float x, float y, int size, ConcurrentLinkedQueue<FloatPoint> points)
   {
+    this.map = map;
     this.position = new FloatPoint(x, y);
     this.size = size;
     this.points = points;
@@ -24,19 +27,21 @@ public class Player
   {
     if (!points.isEmpty())
     {
-      position = points.pop();
+      position = points.poll();
       DrawInterface.clear();
       DrawInterface.drawPath();
+      if (map.getFinish().getRect().contains((int) position.x, (int) position.y))
+      {
+        System.out.println("YAYAYAYAY");
+      }
     }
   }
 
   public void draw()
   {
     DrawInterface.paint.setStyle(Paint.Style.FILL);
-    DrawInterface.paint.setColor(Constants.playerColor);
-    DrawInterface.canvas.drawCircle(position.x, position.y, size, DrawInterface.paint);
-//    DrawInterface.paint.setColor(Color.BLACK);
-//    DrawInterface.canvas.drawCircle(position.x, position.y, size - (int)(size * 0.3), DrawInterface.paint);
+    DrawInterface.paint.setColor(Constants.PLAYER_COLOR);
+    DrawInterface.canvas.drawCircle(position.x, position.y, size * Constants.SCALE, DrawInterface.paint);
     DrawInterface.paint.reset();
   }
 
