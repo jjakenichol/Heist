@@ -121,7 +121,7 @@ public class Map
   {
     for (Wall wall : walls)
     {
-      if (wall.getRect().contains((int) point.x, (int) point.y)) return true;
+      if (wall.getBufferRect().contains((int) point.x, (int) point.y)) return true;
     }
     return false;
   }

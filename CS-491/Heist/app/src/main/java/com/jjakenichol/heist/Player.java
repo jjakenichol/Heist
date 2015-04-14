@@ -1,7 +1,9 @@
 package com.jjakenichol.heist;
 
+import android.content.Intent;
 import android.graphics.Paint;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -10,6 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Player
 {
+  public boolean hasWon = false;
+  public boolean hasLost = false;
   private int size = -1;
   private Map map;
   private FloatPoint position;
@@ -25,24 +29,48 @@ public class Player
 
   public void update()
   {
-    if (!points.isEmpty())
+    if (points.size() > 1)
     {
       position = points.poll();
-      DrawInterface.clear();
-      DrawInterface.drawPath();
-      if (map.getFinish().getRect().contains((int) position.x, (int) position.y))
-      {
-        System.out.println("YAYAYAYAY");
-      }
+      position = points.poll();
+//      position = points.poll();
+//      position = points.poll();
+//      position = points.poll();
     }
   }
 
   public void draw()
   {
+    if (map.getFinish().getRect().contains((int) position.x, (int) position.y))
+    {
+      this.hasWon = true;
+    }
     DrawInterface.paint.setStyle(Paint.Style.FILL);
     DrawInterface.paint.setColor(Constants.PLAYER_COLOR);
     DrawInterface.canvas.drawCircle(position.x, position.y, size * Constants.SCALE, DrawInterface.paint);
     DrawInterface.paint.reset();
+  }
+
+  public static void fillOutPoints(ConcurrentLinkedQueue<FloatPoint> points)
+  {
+    ConcurrentLinkedQueue<FloatPoint> newPoints = new ConcurrentLinkedQueue<>();
+    FloatPoint[] pointsArray = new FloatPoint[points.size()];
+    points.toArray(pointsArray);
+    int index;
+
+    for (FloatPoint floatPoint : pointsArray)
+    {
+      newPoints.add(floatPoint);
+      index = Arrays.asList(pointsArray).indexOf(floatPoint);
+      if (index == pointsArray.length) break;
+
+      FloatPoint newPoint = new FloatPoint((pointsArray[index].x + pointsArray[index].x) / 2,(pointsArray[index].y + pointsArray[index].y)
+            / 2);
+
+      newPoints.add(newPoint);
+    }
+    points.clear();
+    points.addAll(newPoints);
   }
 
   /**

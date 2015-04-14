@@ -9,7 +9,8 @@ public class Game extends Thread
 
   public Game(Map map)
   {
-    player = new Player(map, DrawInterface.displayWidth / 2, DrawInterface.displayHeight / 2, Constants.PLAYER_SIZE, DrawInterface.getPoints());
+    player = new Player(map, DrawInterface.displayWidth - 75, DrawInterface.displayHeight - Constants.PLAYER_SIZE, Constants.PLAYER_SIZE,
+            DrawInterface.getPoints());
     player.draw();
   }
 
@@ -23,7 +24,13 @@ public class Game extends Thread
       if (System.currentTimeMillis() % 50 == 0)
       {
         player.update();
+        DrawInterface.repaint();
       }
     }
+  }
+
+  public Player getPlayer()
+  {
+    return player;
   }
 }

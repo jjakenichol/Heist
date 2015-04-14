@@ -9,5 +9,7 @@
     <string name="title_activity_display_message">MyMessage</string>
     <string name="title_activity_draw_interface">DrawInterface</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_win">WinActivity</string>
+    <string name="title_activity_lose">LoseActivity</string>
 
 </resources>

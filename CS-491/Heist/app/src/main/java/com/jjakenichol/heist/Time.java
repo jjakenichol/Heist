@@ -2,20 +2,19 @@ package com.jjakenichol.heist;
 
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.CountDownTimer;
 
 /**
- * Created by JakeNichol on 4/13/15.
+ * Created by JakeNichol on 4/14/15.
  */
-public class Finish
+public class Time
 {
   private Rect rect;
-  private int left, top = -1;
+  private String time = new String("");
+  public CountDownTimer timer;
 
-  public Finish(int left, int top, int right, int bottom)
+  public Time(final Player player, int left, int top, int right, int bottom)
   {
-    this.left = left;
-    this.top = top;
-
     rect = new Rect(left, top, right, bottom);
 
     // Adjust to scale
@@ -23,34 +22,37 @@ public class Finish
     rect.top = (int) (rect.top * Constants.SCALE);
     rect.right = (int) (rect.right * Constants.SCALE);
     rect.bottom = (int) (rect.bottom * Constants.SCALE);
+
+    timer = new CountDownTimer(30000, 1000)
+    {
+      public void onTick(long millisUntilFinished)
+      {
+        time = "" + millisUntilFinished / 1000;
+      }
+
+      public void onFinish()
+      {
+        player.hasLost = true;
+      }
+    };
   }
 
   public void draw()
   {
     DrawInterface.paint.setStrokeWidth(Constants.WALL_WIDTH);
-    DrawInterface.paint.setColor(Constants.FINISH_COLOR);
+    DrawInterface.paint.setColor(Constants.WALL_COLOR);
     DrawInterface.paint.setStyle(Paint.Style.STROKE);
     DrawInterface.canvas.drawRect(rect, DrawInterface.paint);
     DrawInterface.paint.reset();
 
-    DrawInterface.paint.setColor(Constants.FINISH_COLOR);
+    DrawInterface.paint.setColor(Constants.WALL_COLOR);
     DrawInterface.paint.setTextSize(Constants.TEXT_SIZE * Constants.SCALE);
-    DrawInterface.canvas.drawText("END", rect.left, rect.bottom + DrawInterface.paint.getTextSize(), DrawInterface.paint);
+    DrawInterface.canvas.drawText(time, rect.left + 5, rect.top + DrawInterface.paint.getTextSize(), DrawInterface.paint);
     DrawInterface.paint.reset();
   }
 
   public Rect getRect()
   {
     return this.rect;
-  }
-
-  public int getLeft()
-  {
-    return this.left;
-  }
-
-  public int getTop()
-  {
-    return this.top;
   }
 }
