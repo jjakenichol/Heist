@@ -1,75 +1,81 @@
 package com.jjakenichol.heist;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.view.View;
+
 import java.util.HashSet;
 
 /**
  * Created by JakeNichol on 4/9/15.
  */
-public class Map
+public class Map extends View
 {
   private HashSet<Wall> walls = new HashSet<>();
   private Finish finish;
 
-  public Map()
+  public Map(Context context)
   {
+    super(context);
+
     // #SA -- <wall group><side><adjacency (auxiliary walls)>
     // Sides: L = left, T = top, R = right, B = bottom
     // Adjacency: L = left, R = right, A = above, B = below // For auxiliary walls
-    Wall wall1L = new Wall(Constants.WALL_WIDTH, Constants.WALL_WIDTH, Orientation.Vertical, (int) DrawInterface.displayHeight);
-    Wall wall1TL = new Wall(Constants.WALL_WIDTH, Constants.WALL_WIDTH, Orientation.Horizontal, 30);
-    Wall wall1TR = new Wall(Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH, Orientation.Horizontal,
+    Wall wall1L = new Wall(context, Constants.WALL_WIDTH, Constants.WALL_WIDTH, Orientation.Vertical, (int) DrawInterface.displayHeight);
+    Wall wall1TL = new Wall(context, Constants.WALL_WIDTH, Constants.WALL_WIDTH, Orientation.Horizontal, 30);
+    Wall wall1TR = new Wall(context, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH, Orientation.Horizontal,
             (int) DrawInterface.displayWidth - (30 + Constants.DOOR_SIZE));
-    Wall wall1R = new Wall((int) DrawInterface.displayWidth - Constants.WALL_WIDTH, Constants.WALL_WIDTH, Orientation.Vertical,
+    Wall wall1R = new Wall(context, (int) DrawInterface.displayWidth - Constants.WALL_WIDTH, Constants.WALL_WIDTH, Orientation.Vertical,
             (int) DrawInterface.displayHeight);
-    Wall wall1BL = new Wall(Constants.WALL_WIDTH, (int) DrawInterface.displayHeight - Constants.WALL_WIDTH, Orientation.Horizontal,
+    Wall wall1BL = new Wall(context, Constants.WALL_WIDTH, (int) DrawInterface.displayHeight - Constants.WALL_WIDTH, Orientation.Horizontal,
             (int) DrawInterface.displayWidth - (30 + Constants.DOOR_SIZE));
-    Wall wall1BR = new Wall(Constants.WALL_WIDTH + ((int) DrawInterface.displayWidth - 30), (int) DrawInterface.displayHeight - Constants.WALL_WIDTH,
+    Wall wall1BR = new Wall(context, Constants.WALL_WIDTH + ((int) DrawInterface.displayWidth - 30), (int) DrawInterface.displayHeight - Constants.WALL_WIDTH,
             Orientation.Horizontal, 30);
 
-    Wall wall2L = new Wall(Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE),
+    Wall wall2L = new Wall(context, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE),
             Orientation.Vertical, (int) DrawInterface.displayHeight - 2 * (Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE)));
-    Wall wall2T = new Wall(Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE),
+    Wall wall2T = new Wall(context, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE),
             Orientation.Horizontal, 600);
-    Wall wall2TR = new Wall(Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE) + 600, Constants.WALL_WIDTH,
+    Wall wall2TR = new Wall(context, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE) + 600, Constants.WALL_WIDTH,
             Orientation.Vertical, 2 * (Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE)));
-    Wall wall2BL = new Wall(Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE) + (int)
+    Wall wall2BL = new Wall(context, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE) + (int)
             DrawInterface.displayHeight - 2 * (Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE)), Orientation.Horizontal,
             2 * (Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE)));
-    Wall wall2BR = new Wall(wall2BL.getRect().right + Constants.DOOR_SIZE, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE) + (int)
+    Wall wall2BR = new Wall(context, wall2BL.getRect().right + Constants.DOOR_SIZE, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE) + (int)
             DrawInterface.displayHeight - 2 * (Constants.WALL_WIDTH + (30
             + Constants.DOOR_SIZE)), Orientation.Horizontal, (int) DrawInterface.displayWidth - Constants.WALL_WIDTH - (Constants.WALL_WIDTH + (30
             + Constants.DOOR_SIZE)) - (wall2BL.getRect().right + Constants.DOOR_SIZE));
-    Wall wall2R = new Wall(wall2BR.getRect().right, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Orientation.Vertical,
+    Wall wall2R = new Wall(context, wall2BR.getRect().right, Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE), Orientation.Vertical,
             (int) DrawInterface.displayHeight - 2 * (Constants.WALL_WIDTH + (30 + Constants.DOOR_SIZE)) + Constants.WALL_WIDTH);
 
-    Wall wall3LT = new Wall(wall2L.getRect().left + Constants.HALL_WIDTH, wall2L.getRect().left + Constants.HALL_WIDTH, Orientation.Vertical, 300);
-    Wall wall3LB = new Wall(wall3LT.getRect().left, wall3LT.getRect().bottom + Constants.DOOR_SIZE + Constants.WALL_WIDTH, Orientation.Vertical,
+    Wall wall3LT = new Wall(context, wall2L.getRect().left + Constants.HALL_WIDTH, wall2L.getRect().left + Constants.HALL_WIDTH, Orientation.Vertical, 300);
+    Wall wall3LB = new Wall(context, wall3LT.getRect().left, wall3LT.getRect().bottom + Constants.DOOR_SIZE + Constants.WALL_WIDTH, Orientation.Vertical,
             wall2BL.getRect().top - (wall3LT.getRect().bottom + Constants.DOOR_SIZE) - Constants.HALL_WIDTH);
-    Wall wall3BL = new Wall(wall3LT.getRect().left, wall3LB.getRect().bottom, Orientation.Horizontal, 2 * wall3LT.getLength());
-    Wall wall3BR = new Wall(wall3BL.getRect().right + Constants.WALL_WIDTH + Constants.DOOR_SIZE, wall3BL.getRect().top, Orientation.Horizontal,
+    Wall wall3BL = new Wall(context, wall3LT.getRect().left, wall3LB.getRect().bottom, Orientation.Horizontal, 2 * wall3LT.getLength());
+    Wall wall3BR = new Wall(context, wall3BL.getRect().right + Constants.WALL_WIDTH + Constants.DOOR_SIZE, wall3BL.getRect().top, Orientation.Horizontal,
             wall2R.getRect().left - (wall3BL.getRect().right + Constants.WALL_WIDTH + Constants.DOOR_SIZE) - Constants.HALL_WIDTH);
-    Wall wall3RB = new Wall(wall3BR.getRect().right, wall3BR.getRect().top - Constants.HALL_WIDTH, Orientation.Vertical,
+    Wall wall3RB = new Wall(context, wall3BR.getRect().right, wall3BR.getRect().top - Constants.HALL_WIDTH, Orientation.Vertical,
             Constants.HALL_WIDTH + Constants.WALL_WIDTH);
-    Wall wall3RT = new Wall(wall3RB.getRect().left, wall3LT.getTop(), Orientation.Vertical, (int) DrawInterface.displayHeight - wall3RB.getRect()
+    Wall wall3RT = new Wall(context, wall3RB.getRect().left, wall3LT.getTopSide(), Orientation.Vertical, (int) DrawInterface.displayHeight - wall3RB.getRect()
             .top - Constants.DOOR_SIZE - 3 * Constants.WALL_WIDTH);
-    Wall wall3T = new Wall(wall3LT.getLeft(), wall3LT.getTop(), Orientation.Horizontal, wall3RT.getRect().right - wall3LT.getLeft());
+    Wall wall3T = new Wall(context, wall3LT.getLeftSide(), wall3LT.getTopSide(), Orientation.Horizontal, wall3RT.getRect().right - wall3LT.getLeftSide());
 
-    Wall wall4LB = new Wall(wall3LB.getLeft() + Constants.HALL_WIDTH, wall3BL.getTop() - Constants.HALL_WIDTH, Orientation.Horizontal,
+    Wall wall4LB = new Wall(context, wall3LB.getLeftSide() + Constants.HALL_WIDTH, wall3BL.getTopSide() - Constants.HALL_WIDTH, Orientation.Horizontal,
             Constants.HALL_WIDTH);
-    Wall wall4LT = new Wall(wall3LT.getLeft() + Constants.HALL_WIDTH, wall3LT.getTop(), Orientation.Vertical,
-            wall4LB.getTop() - wall3LT.getTop() - Constants.HALL_WIDTH);
-    Wall wall4R = new Wall(wall4LT.getLeft() + Constants.HALL_WIDTH, wall3T.getTop() + Constants.HALL_WIDTH, Orientation.Vertical,
-            wall3BL.getTop() - (wall3T.getTop() + Constants.HALL_WIDTH));
+    Wall wall4LT = new Wall(context, wall3LT.getLeftSide() + Constants.HALL_WIDTH, wall3LT.getTopSide(), Orientation.Vertical,
+            wall4LB.getTopSide() - wall3LT.getTopSide() - Constants.HALL_WIDTH);
+    Wall wall4R = new Wall(context, wall4LT.getLeftSide() + Constants.HALL_WIDTH, wall3T.getTopSide() + Constants.HALL_WIDTH, Orientation.Vertical,
+            wall3BL.getTopSide() - (wall3T.getTopSide() + Constants.HALL_WIDTH));
 
-    Wall wall5L = new Wall(wall4R.getLeft() + Constants.HALL_WIDTH, wall3BL.getTop() - 2 * Constants.HALL_WIDTH, Orientation.Vertical,
+    Wall wall5L = new Wall(context, wall4R.getLeftSide() + Constants.HALL_WIDTH, wall3BL.getTopSide() - 2 * Constants.HALL_WIDTH, Orientation.Vertical,
             Constants.HALL_WIDTH);
-    Wall wall5BL = new Wall(wall5L.getLeft(), wall5L.getRect().bottom, Orientation.Horizontal, 3 * Constants.HALL_WIDTH);
-    Wall wall5BR = new Wall(wall5BL.getRect().right + Constants.DOOR_SIZE, wall5BL.getTop(), Orientation.Horizontal,
-            wall3RB.getLeft() - (wall5BL.getRect().right + Constants.DOOR_SIZE) - Constants.HALL_WIDTH);
-    Wall wall5R = new Wall(wall5BR.getRect().right - Constants.WALL_WIDTH, wall5L.getTop(), Orientation.Vertical, Constants.HALL_WIDTH);
-    Wall wall5TL = new Wall(wall5L.getLeft(), wall5L.getTop(), Orientation.Horizontal, Constants.HALL_WIDTH);
-    Wall wall5TR = new Wall(wall5TL.getRect().right - Constants.WALL_WIDTH + Constants.DOOR_SIZE, wall5TL.getTop(), Orientation.Horizontal,
-            wall5R.getLeft() - (wall5TL.getRect().right - Constants.WALL_WIDTH + Constants.DOOR_SIZE));
+    Wall wall5BL = new Wall(context, wall5L.getLeftSide(), wall5L.getRect().bottom, Orientation.Horizontal, 3 * Constants.HALL_WIDTH);
+    Wall wall5BR = new Wall(context, wall5BL.getRect().right + Constants.DOOR_SIZE, wall5BL.getTopSide(), Orientation.Horizontal,
+            wall3RB.getLeftSide() - (wall5BL.getRect().right + Constants.DOOR_SIZE) - Constants.HALL_WIDTH);
+    Wall wall5R = new Wall(context, wall5BR.getRect().right - Constants.WALL_WIDTH, wall5L.getTopSide(), Orientation.Vertical, Constants.HALL_WIDTH);
+    Wall wall5TL = new Wall(context, wall5L.getLeftSide(), wall5L.getTopSide(), Orientation.Horizontal, Constants.HALL_WIDTH);
+    Wall wall5TR = new Wall(context, wall5TL.getRect().right - Constants.WALL_WIDTH + Constants.DOOR_SIZE, wall5TL.getTopSide(), Orientation.Horizontal,
+            wall5R.getLeftSide() - (wall5TL.getRect().right - Constants.WALL_WIDTH + Constants.DOOR_SIZE));
 
 
     walls.add(wall1L);
@@ -105,16 +111,17 @@ public class Map
     walls.add(wall5TL);
     walls.add(wall5TR);
 
-    finish = new Finish(wall1TL.getRect().right, -Constants.WALL_WIDTH, wall1TL.getRect().right + Constants.DOOR_SIZE, Constants.DOOR_SIZE / 2);
+    finish = new Finish(context, wall1TL.getRect().right, -Constants.WALL_WIDTH, wall1TL.getRect().right + Constants.DOOR_SIZE, Constants.DOOR_SIZE / 2);
   }
 
-  public void draw()
+  @Override
+  public void onDraw(Canvas canvas)
   {
     for (Wall wall : walls)
     {
-      wall.draw();
+      wall.draw(canvas);
     }
-    finish.draw();
+    finish.draw(canvas);
   }
 
   public boolean isInWall(FloatPoint point)

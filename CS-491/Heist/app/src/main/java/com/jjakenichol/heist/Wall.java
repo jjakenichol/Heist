@@ -1,18 +1,22 @@
 package com.jjakenichol.heist;
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.view.View;
 
 /**
  * Created by JakeNichol on 4/9/15.
  */
-public class Wall
+public class Wall extends View
 {
   private Rect rect;
   private Rect bufferRect;
   private int left, top, length = -1;
 
-  public Wall(int left, int top, Orientation orientation, int length)
+  public Wall(Context context, int left, int top, Orientation orientation, int length)
   {
+    super(context);
     this.left = left;
     this.top = top;
     this.length = length;
@@ -36,11 +40,12 @@ public class Wall
     bufferRect.bottom = (int) (bufferRect.bottom * Constants.SCALE);
   }
 
-  public void draw()
+  @Override
+  public void draw(Canvas canvas)
   {
     DrawInterface.paint.setStrokeWidth(Constants.WALL_WIDTH);
     DrawInterface.paint.setColor(Constants.WALL_COLOR);
-    DrawInterface.canvas.drawRect(rect, DrawInterface.paint);
+    canvas.drawRect(rect, DrawInterface.paint);
     DrawInterface.paint.reset();
   }
 
@@ -54,12 +59,12 @@ public class Wall
     return this.bufferRect;
   }
 
-  public int getLeft()
+  public int getLeftSide()
   {
     return this.left;
   }
 
-  public int getTop()
+  public int getTopSide()
   {
     return this.top;
   }

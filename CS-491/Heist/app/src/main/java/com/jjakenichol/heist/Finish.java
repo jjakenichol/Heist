@@ -1,18 +1,22 @@
 package com.jjakenichol.heist;
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.view.View;
 
 /**
  * Created by JakeNichol on 4/13/15.
  */
-public class Finish
+public class Finish extends View
 {
   private Rect rect;
   private int left, top = -1;
 
-  public Finish(int left, int top, int right, int bottom)
+  public Finish(Context context, int left, int top, int right, int bottom)
   {
+    super(context);
     this.left = left;
     this.top = top;
 
@@ -25,17 +29,18 @@ public class Finish
     rect.bottom = (int) (rect.bottom * Constants.SCALE);
   }
 
-  public void draw()
+  @Override
+  public void draw(Canvas canvas)
   {
     DrawInterface.paint.setStrokeWidth(Constants.WALL_WIDTH);
     DrawInterface.paint.setColor(Constants.FINISH_COLOR);
     DrawInterface.paint.setStyle(Paint.Style.STROKE);
-    DrawInterface.canvas.drawRect(rect, DrawInterface.paint);
+    canvas.drawRect(rect, DrawInterface.paint);
     DrawInterface.paint.reset();
 
     DrawInterface.paint.setColor(Constants.FINISH_COLOR);
     DrawInterface.paint.setTextSize(Constants.TEXT_SIZE * Constants.SCALE);
-    DrawInterface.canvas.drawText("END", rect.left, rect.bottom + DrawInterface.paint.getTextSize(), DrawInterface.paint);
+    canvas.drawText("END", rect.left, rect.bottom + DrawInterface.paint.getTextSize(), DrawInterface.paint);
     DrawInterface.paint.reset();
   }
 
@@ -44,13 +49,13 @@ public class Finish
     return this.rect;
   }
 
-  public int getLeft()
-  {
-    return this.left;
-  }
-
-  public int getTop()
-  {
-    return this.top;
-  }
+//  public int getLeftSide()
+//  {
+//    return this.left;
+//  }
+//
+//  public int getTopSide()
+//  {
+//    return this.top;
+//  }
 }
