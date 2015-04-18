@@ -66,14 +66,14 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
     imageView.setOnTouchListener(this);
 
     // Draw Map
-    map = new Map();
-    map.draw();
+    map = new Map(this);
+//    map.draw();
 
     // Start Game
-    game = new Game(map);
+    game = new Game(this, canvas, map);
     game.start();
 
-    time = new Time(game.getPlayer(), 800, 20, 800 + Constants.TEXT_SIZE + 20, Constants.TEXT_SIZE + 30);
+    time = new Time(this, game.getPlayer(), 800, 20, 800 + Constants.TEXT_SIZE + 20, Constants.TEXT_SIZE + 30);
 
     thread = new Thread(this);
     thread.start();
@@ -95,7 +95,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
         break;
       case MotionEvent.ACTION_MOVE:
         FloatPoint point = new FloatPoint(event.getRawX(), event.getRawY());
-        if (!map.isInWall(point))
+//        if (!map.isInWall(point))
         {
           points.add(point);
           newPoints.add(point);
@@ -125,21 +125,24 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
   {
     path = new Path();
     canvas.drawColor(Color.parseColor("#050490"));
-    map.draw();
+    map.draw(canvas);
     drawPath();
-    time.draw();
+    time.draw(canvas);
+    game.getPlayer().draw(canvas);
 
-    imageView.postInvalidate(time.getRect().left, time.getRect().top, time.getRect().right,
-            time.getRect().bottom);
-    for (FloatPoint point : newPoints)
-    {
-      imageView.postInvalidate((int) point.x - Constants.PATH_WIDTH, (int) point.y - Constants.PATH_WIDTH, (int) point.x + Constants.PATH_WIDTH,
-              (int) point.y + Constants.PATH_WIDTH);
-    }
-    newPoints.clear();
-    imageView.postInvalidate((int) game.getPlayer().getPosition().x - Constants.PLAYER_SIZE, (int) game.getPlayer().getPosition().y -
-                    Constants.PLAYER_SIZE, (int) game.getPlayer().getPosition().x + Constants.PLAYER_SIZE,
-            (int) game.getPlayer().getPosition().y + Constants.PLAYER_SIZE);
+    imageView.postInvalidate();
+
+//    imageView.postInvalidate(time.getRect().left, time.getRect().top, time.getRect().right,
+//            time.getRect().bottom);
+//    for (FloatPoint point : newPoints)
+//    {
+//      imageView.postInvalidate((int) point.x - Constants.PATH_WIDTH, (int) point.y - Constants.PATH_WIDTH, (int) point.x + Constants.PATH_WIDTH,
+//              (int) point.y + Constants.PATH_WIDTH);
+//    }
+//    newPoints.clear();
+//    imageView.postInvalidate((int) game.getPlayer().getPosition().x - Constants.PLAYER_SIZE, (int) game.getPlayer().getPosition().y -
+//                    Constants.PLAYER_SIZE, (int) game.getPlayer().getPosition().x + Constants.PLAYER_SIZE,
+//            (int) game.getPlayer().getPosition().y + Constants.PLAYER_SIZE);
   }
 
   @Override
@@ -174,7 +177,7 @@ public class DrawInterface extends Activity implements OnTouchListener, View.OnC
         }
       }
 
-      if (System.currentTimeMillis() % 10 == 0)
+      if (System.currentTimeMillis() % 50 == 0)
       {
 //        imageView.postInvalidate(time.getRect().left, time.getRect().top, time.getRect().right,
 //                time.getRect().bottom);

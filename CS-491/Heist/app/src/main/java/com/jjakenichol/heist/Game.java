@@ -1,17 +1,22 @@
 package com.jjakenichol.heist;
 
+import android.content.Context;
+import android.graphics.Canvas;
+
 /**
  * Created by JakeNichol on 4/6/15.
  */
 public class Game extends Thread
 {
   private Player player;
+  private Canvas canvas;
 
-  public Game(Map map)
+  public Game(Context context, Canvas canvas, Map map)
   {
-    player = new Player(map, DrawInterface.displayWidth - 75, DrawInterface.displayHeight - Constants.PLAYER_SIZE, Constants.PLAYER_SIZE,
+    this.canvas = canvas;
+    player = new Player(context, map, DrawInterface.displayWidth - 75, DrawInterface.displayHeight - Constants.PLAYER_SIZE, Constants.PLAYER_SIZE,
             DrawInterface.getPoints());
-    player.draw();
+//    player.draw();
   }
 
   @Override
@@ -19,7 +24,7 @@ public class Game extends Thread
   {
     while (true)
     {
-      player.draw();
+      player.draw(canvas);
 
       if (System.currentTimeMillis() % 50 == 0)
       {

@@ -1,20 +1,24 @@
 package com.jjakenichol.heist;
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.CountDownTimer;
+import android.view.View;
 
 /**
  * Created by JakeNichol on 4/14/15.
  */
-public class Time
+public class Time extends View
 {
   private Rect rect;
-  private String time = new String("");
+  private String time = new String("30");
   public CountDownTimer timer;
 
-  public Time(final Player player, int left, int top, int right, int bottom)
+  public Time(Context context, final Player player, int left, int top, int right, int bottom)
   {
+    super(context);
     rect = new Rect(left, top, right, bottom);
 
     // Adjust to scale
@@ -37,17 +41,18 @@ public class Time
     };
   }
 
-  public void draw()
+  @Override
+  public void onDraw(Canvas canvas)
   {
     DrawInterface.paint.setStrokeWidth(Constants.WALL_WIDTH);
     DrawInterface.paint.setColor(Constants.WALL_COLOR);
     DrawInterface.paint.setStyle(Paint.Style.STROKE);
-    DrawInterface.canvas.drawRect(rect, DrawInterface.paint);
+    canvas.drawRect(rect, DrawInterface.paint);
     DrawInterface.paint.reset();
 
     DrawInterface.paint.setColor(Constants.WALL_COLOR);
     DrawInterface.paint.setTextSize(Constants.TEXT_SIZE * Constants.SCALE);
-    DrawInterface.canvas.drawText(time, rect.left + 5, rect.top + DrawInterface.paint.getTextSize(), DrawInterface.paint);
+    canvas.drawText(time, rect.left + 5, rect.top + DrawInterface.paint.getTextSize(), DrawInterface.paint);
     DrawInterface.paint.reset();
   }
 

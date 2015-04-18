@@ -1,7 +1,10 @@
 package com.jjakenichol.heist;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.View;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -10,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Created by JakeNichol on 4/5/15.
  */
-public class Player
+public class Player extends View
 {
   public boolean hasWon = false;
   public boolean hasLost = false;
@@ -19,8 +22,9 @@ public class Player
   private FloatPoint position;
   private ConcurrentLinkedQueue<FloatPoint> points;
 
-  public Player(Map map, float x, float y, int size, ConcurrentLinkedQueue<FloatPoint> points)
+  public Player(Context context, Map map, float x, float y, int size, ConcurrentLinkedQueue<FloatPoint> points)
   {
+    super(context);
     this.map = map;
     this.position = new FloatPoint(x, y);
     this.size = size;
@@ -29,17 +33,18 @@ public class Player
 
   public void update()
   {
-    if (points.size() > 1)
+    if (points.size() > 0)
     {
       position = points.poll();
-      position = points.poll();
+//      position = points.poll();
 //      position = points.poll();
 //      position = points.poll();
 //      position = points.poll();
     }
   }
 
-  public void draw()
+  @Override
+  public void onDraw(Canvas canvas)
   {
     if (map.getFinish().getRect().contains((int) position.x, (int) position.y))
     {
@@ -47,7 +52,7 @@ public class Player
     }
     DrawInterface.paint.setStyle(Paint.Style.FILL);
     DrawInterface.paint.setColor(Constants.PLAYER_COLOR);
-    DrawInterface.canvas.drawCircle(position.x, position.y, size * Constants.SCALE, DrawInterface.paint);
+    canvas.drawCircle(position.x, position.y, size * Constants.SCALE, DrawInterface.paint);
     DrawInterface.paint.reset();
   }
 
