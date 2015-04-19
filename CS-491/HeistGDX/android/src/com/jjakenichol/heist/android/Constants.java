@@ -5,6 +5,6 @@ package com.jjakenichol.heist.android;
  */
 public class Constants
 {
-  public static final int gameWidth = 800;
-  public static final int gameHeight = 480;
+//  public static final int gameWidth = 800;
+//  public static final int gameHeight = 480;
 }
