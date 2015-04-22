@@ -23,6 +23,8 @@ public class Player
 
   private ShapeRenderer renderer = new ShapeRenderer();
 
+  private int keys = 0;
+
   public Player(Sprite sprite, Vector3 position)
   {
     this.sprite = sprite;
@@ -49,6 +51,16 @@ public class Player
     }
   }
 
+  public void addKey()
+  {
+    this.keys++;
+  }
+
+  public void removeKey()
+  {
+    this.keys--;
+  }
+
   public Sprite getSprite()
   {
     return sprite;
@@ -72,6 +84,11 @@ public class Player
   public Rect getPlayerBox()
   {
     return playerBox;
+  }
+
+  public int getKeys()
+  {
+    return this.keys;
   }
 
   public void setPlayerBox(int left, int top, int right, int bottom)

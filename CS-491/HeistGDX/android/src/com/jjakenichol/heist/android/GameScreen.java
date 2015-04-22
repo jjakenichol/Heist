@@ -1,5 +1,7 @@
 package com.jjakenichol.heist.android;
 
+import android.graphics.Rect;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -8,15 +10,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.CatmullRomSpline;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -36,11 +35,17 @@ public class GameScreen implements Screen
   private Array<Vector3> points = new Array<>();
   private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
+  private Vector2 keyPos = new Vector2(260, 180);
+//  private Rect keyBox = new Rect((int) keyPos.x - Constants.KEY_SIZE, (int) keyPos.y + Constants.KEY_SIZE, (int) keyPos.x + Constants.KEY_SIZE,
+//          (int) keyPos.y - Constants.KEY_SIZE);
+private Rect keyBox = new Rect((int) keyPos.x, (int) keyPos.y, (int) keyPos.x + 24, (int) keyPos.y - 24);
+  private boolean keyTaken = false;
+
   public GameScreen(final Heist game)
   {
     this.game = game;
 
-    sprite = new Texture(Gdx.files.internal("img/droplet.png"));
+    sprite = new Texture(Gdx.files.internal("img/Bag_Basement_Key_Sprite.png"));
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -71,40 +76,59 @@ public class GameScreen implements Screen
 
     game.batch.setProjectionMatrix(camera.combined);
 
-//    renderer.getBatch().begin();
-//    player.draw(renderer.getBatch());
-//    renderer.getBatch().end();
+    if (!keyTaken)
+    {
+      game.batch.begin();
+      game.batch.draw(sprite,keyPos.x, keyPos.y);
+      game.batch.end();
+    }
+
+    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+    shapeRenderer.rect(keyBox.left, keyBox.top + 24, keyBox.right - keyPos.x, keyBox.bottom - keyPos.y);
+    shapeRenderer.end();
 
 
-    /*members*/
+    /*input*/
     if (Gdx.input.isTouched())
     {
       Vector3 touchPos = new Vector3();
       touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
       camera.unproject(touchPos);
 
-//      player.setPlayerBox((int) (touchPos.x - player.getSize()), (int) (touchPos.y + player.getSize()), (int) (touchPos.x + player.getSize()),
-//            (int) (touchPos.y - player.getSize()));
-//      TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Walls");
-//      MapObjects objects = collisionLayer.getObjects();
-//
-//      // there are several other types, Rectangle is probably the most common one
-//      for (RectangleMapObject rectangleObject : objects.getByType(RectangleMapObject.class))
-//      {
-//
-//        Rectangle rectangle = rectangleObject.getRectangle();
-//        if (Intersector.overlaps(rectangle, new Rectangle(player.getPlayerBox().left, player.getPlayerBox().top, player.getSize() * 2,
-//                player.getSize() * 2)))
-//        {
-//          // collision happened
-//          if (points.size > 0 && Math.abs(touchPos.x - points.peek().x) <= 50 && Math.abs(touchPos.y - points.peek().y) <= 50) points.add(touchPos);
-//        }
-//      }
+      TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Walls");
+      TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
 
+      try
+      {
+        cell = collisionLayer.getCell((int) (touchPos.x / collisionLayer.getTileWidth()),
+                (int) (touchPos.y / collisionLayer.getTileHeight()));
+      } catch (Exception e)
+      {
+        e.printStackTrace();
+      }
 
-      if (points.size > 0 && Math.abs(touchPos.x - points.peek().x) <= 50 && Math.abs(touchPos.y - points.peek().y) <= 50) points.add(touchPos);
+      if (!cell.getTile().getProperties().containsKey("blocked"))
+      {
+        if (cell.getTile().getProperties().containsKey("door") && player.getKeys() > 0)
+        {
+          player.removeKey();
+          cell.getTile().getProperties().put("unlocked", null);
+          if (points.size > 0 && Math.abs(touchPos.x - points.peek().x) <= Constants.MOVE_DISTANCE && Math.abs(touchPos.y - points.peek().y) <=
+                  Constants.MOVE_DISTANCE) points.add(touchPos);
+        }
+        else if (!cell.getTile().getProperties().containsKey("door") && points.size > 0 && Math.abs(touchPos.x - points.peek().x) <= Constants
+                .MOVE_DISTANCE && Math.abs(touchPos.y - points.peek().y) <= Constants.MOVE_DISTANCE) points.add(touchPos);
+      }
+
+      if (keyBox.contains((int) points.peek().x, (int) points.peek().y))
+      {
+        System.out.println(points.peek());
+        keyTaken = true;
+        player.addKey();
+      }
     }
-    /*render()*/
+
+    /*render line*/
     if (points.size > 0)
     {
       Vector3[] pointsArray = points.toArray(Vector3.class);
@@ -120,10 +144,6 @@ public class GameScreen implements Screen
       shapeRenderer.end();
 
       player.draw(renderer.getBatch(), catmull, points);
-
-//      game.batch.begin();
-//      game.batch.draw(sprite, points.peek().x, points.poll().y);
-//      game.batch.end();
     }
   }
 
