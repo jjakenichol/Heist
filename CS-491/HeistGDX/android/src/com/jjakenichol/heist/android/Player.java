@@ -1,36 +1,39 @@
 package com.jjakenichol.heist.android;
 
-import android.graphics.Rect;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * Created by JakeNichol on 4/20/15.
+ * Author: J. Jake Nichol
+ *
+ * Date: 4/20/15
  */
 public class Player
 {
   private Sprite sprite;
   private Vector3 position = new Vector3(0, 0, 0);
+  private Vector3 linePosition = new Vector3(0, 0, 0);
   private float size = 8;
-  private Rect playerBox = new Rect((int) position.x - 8, (int) position.y + 8, (int) position.x + 8, (int) position.y - 8);
+  private Rectangle playerBox = new Rectangle(position.x - 30 / 2, position.y - 30 / 2, 30, 30);
+  private Rectangle lineBox = new Rectangle(linePosition.x - size / 2, linePosition.y - size / 2, size, size);
 
   private ShapeRenderer renderer = new ShapeRenderer();
 
   private int keys = 0;
 
-  public Player(Sprite sprite, Vector3 position)
+  public Player(Sprite sprite, Vector3 position, Vector3 linePosition)
   {
     this.sprite = sprite;
     this.position = position;
+    this.linePosition = linePosition;
   }
-
 
   public void draw(Batch batch, CatmullRomSpline<Vector3> catmull, Array<Vector3> array)
   {
@@ -49,6 +52,10 @@ public class Player
       position = catmull.controlPoints[0];
       if (array.size > 1) array.removeIndex(0);
     }
+    this.linePosition = array.peek();
+
+    playerBox.set(position.x - 30 / 2, position.y - 30 / 2, 30, 30);
+    lineBox.set(linePosition.x - size / 2, linePosition.y - size / 2, size, size);
   }
 
   public void addKey()
@@ -71,6 +78,11 @@ public class Player
     return position;
   }
 
+  public Vector3 getLinePosition()
+  {
+    return this.linePosition;
+  }
+
   public float getSize()
   {
     return size;
@@ -81,9 +93,14 @@ public class Player
     return renderer;
   }
 
-  public Rect getPlayerBox()
+  public Rectangle getPlayerBox()
   {
-    return playerBox;
+    return this.playerBox;
+  }
+
+  public Rectangle getLineBox()
+  {
+    return this.lineBox;
   }
 
   public int getKeys()
@@ -91,9 +108,9 @@ public class Player
     return this.keys;
   }
 
-  public void setPlayerBox(int left, int top, int right, int bottom)
+  public void setPlayerBox(float left, float top, float width, float height)
   {
-    playerBox.set(left, top, right, bottom);
+    playerBox.set(left, top, width, height);
   }
 
 }

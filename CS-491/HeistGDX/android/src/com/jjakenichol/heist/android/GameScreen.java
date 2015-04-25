@@ -1,7 +1,5 @@
 package com.jjakenichol.heist.android;
 
-import android.graphics.Rect;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -15,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -36,10 +35,9 @@ public class GameScreen implements Screen
   private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
   private Vector2 keyPos = new Vector2(260, 180);
-//  private Rect keyBox = new Rect((int) keyPos.x - Constants.KEY_SIZE, (int) keyPos.y + Constants.KEY_SIZE, (int) keyPos.x + Constants.KEY_SIZE,
-//          (int) keyPos.y - Constants.KEY_SIZE);
-private Rect keyBox = new Rect((int) keyPos.x, (int) keyPos.y, (int) keyPos.x + 24, (int) keyPos.y - 24);
+  private Rectangle keyBox = new Rectangle(keyPos.x, keyPos.y, 24, 24);
   private boolean keyTaken = false;
+  private boolean keyAdded = false;
 
   public GameScreen(final Heist game)
   {
@@ -60,7 +58,8 @@ private Rect keyBox = new Rect((int) keyPos.x, (int) keyPos.y, (int) keyPos.x + 
 
     renderer = new OrthogonalTiledMapRenderer(map);
 
-    player = new Player(new Sprite(new Texture("img/droplet.png")), new Vector3(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0));
+    player = new Player(new Sprite(new Texture("img/droplet.png")), new Vector3(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0),
+            points.peek());
   }
 
   @Override
@@ -79,14 +78,14 @@ private Rect keyBox = new Rect((int) keyPos.x, (int) keyPos.y, (int) keyPos.x + 
     if (!keyTaken)
     {
       game.batch.begin();
-      game.batch.draw(sprite,keyPos.x, keyPos.y);
+      game.batch.draw(sprite, keyPos.x, keyPos.y);
       game.batch.end();
     }
 
     shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-    shapeRenderer.rect(keyBox.left, keyBox.top + 24, keyBox.right - keyPos.x, keyBox.bottom - keyPos.y);
+    shapeRenderer.rect(player.getPlayerBox().getX(), player.getPlayerBox().getY(), player.getPlayerBox().getWidth(),
+            player.getPlayerBox().getHeight());
     shapeRenderer.end();
-
 
     /*input*/
     if (Gdx.input.isTouched())
@@ -120,12 +119,12 @@ private Rect keyBox = new Rect((int) keyPos.x, (int) keyPos.y, (int) keyPos.x + 
                 .MOVE_DISTANCE && Math.abs(touchPos.y - points.peek().y) <= Constants.MOVE_DISTANCE) points.add(touchPos);
       }
 
-      if (keyBox.contains((int) points.peek().x, (int) points.peek().y))
+      if (player.getLineBox().overlaps(keyBox) && !keyAdded)
       {
-        System.out.println(points.peek());
-        keyTaken = true;
         player.addKey();
+        keyAdded = true;
       }
+      if (player.getPlayerBox().overlaps(keyBox) && !keyTaken) keyTaken = true;
     }
 
     /*render line*/
