@@ -56,7 +56,7 @@ public class GameScreen implements Screen
   {
     map = new TmxMapLoader().load("maps/map.tmx");
 
-    renderer = new OrthogonalTiledMapRenderer(map);
+    renderer = new OrthogonalTiledMapRenderer(map, 2f);
 
     player = new Player(new Sprite(new Texture("img/droplet.png")), new Vector3(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0),
             points.peek());
@@ -82,10 +82,10 @@ public class GameScreen implements Screen
       game.batch.end();
     }
 
-    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-    shapeRenderer.rect(player.getPlayerBox().getX(), player.getPlayerBox().getY(), player.getPlayerBox().getWidth(),
-            player.getPlayerBox().getHeight());
-    shapeRenderer.end();
+//    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//    shapeRenderer.rect(player.getPlayerBox().getX(), player.getPlayerBox().getY(), player.getPlayerBox().getWidth(),
+//            player.getPlayerBox().getHeight());
+//    shapeRenderer.end();
 
     /*input*/
     if (Gdx.input.isTouched())
@@ -110,7 +110,7 @@ public class GameScreen implements Screen
       {
         if (cell.getTile().getProperties().containsKey("door") && player.getKeys() > 0)
         {
-          player.removeKey();
+//          player.removeKey();
           cell.getTile().getProperties().put("unlocked", null);
           if (points.size > 0 && Math.abs(touchPos.x - points.peek().x) <= Constants.MOVE_DISTANCE && Math.abs(touchPos.y - points.peek().y) <=
                   Constants.MOVE_DISTANCE) points.add(touchPos);
