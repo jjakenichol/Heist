@@ -28,22 +28,32 @@ public class GameScreen implements Screen
 
   private TiledMap map;
   private OrthogonalTiledMapRenderer renderer;
-  private Texture sprite;
+  private float unitScale = Gdx.graphics.getDensity();
   private Player player;
 
   private Array<Vector3> points = new Array<>();
   private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
+  private Texture keySprite;
   private Vector2 keyPos = new Vector2(260, 180);
   private Rectangle keyBox = new Rectangle(keyPos.x, keyPos.y, 24, 24);
   private boolean keyTaken = false;
   private boolean keyAdded = false;
 
+  private Texture treasureSprite;
+  private Vector2 treasurePos = new Vector2(550, 405);
+  private Rectangle treasureBox = new Rectangle(treasurePos.x, treasurePos.y, 32, 24);
+  private boolean treasureTaken = false;
+  private boolean treasureAdded = false;
+
+  private Rectangle winBox = new Rectangle(4 * 16, Gdx.graphics.getHeight() - 32, 32, 32);
+
   public GameScreen(final Heist game)
   {
     this.game = game;
 
-    sprite = new Texture(Gdx.files.internal("img/Bag_Basement_Key_Sprite.png"));
+    keySprite = new Texture(Gdx.files.internal("img/Bag_Basement_Key_Sprite.png"));
+    treasureSprite = new Texture(Gdx.files.internal("img/ALttP_Treasure_Chest_2.png"));
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -56,7 +66,7 @@ public class GameScreen implements Screen
   {
     map = new TmxMapLoader().load("maps/map.tmx");
 
-    renderer = new OrthogonalTiledMapRenderer(map, 2f);
+    renderer = new OrthogonalTiledMapRenderer(map);
 
     player = new Player(new Sprite(new Texture("img/droplet.png")), new Vector3(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0),
             points.peek());
@@ -78,7 +88,14 @@ public class GameScreen implements Screen
     if (!keyTaken)
     {
       game.batch.begin();
-      game.batch.draw(sprite, keyPos.x, keyPos.y);
+      game.batch.draw(keySprite, keyPos.x, keyPos.y);
+      game.batch.end();
+    }
+
+    if (!treasureTaken)
+    {
+      game.batch.begin();
+      game.batch.draw(treasureSprite, treasurePos.x, treasurePos.y);
       game.batch.end();
     }
 
@@ -86,6 +103,10 @@ public class GameScreen implements Screen
 //    shapeRenderer.rect(player.getPlayerBox().getX(), player.getPlayerBox().getY(), player.getPlayerBox().getWidth(),
 //            player.getPlayerBox().getHeight());
 //    shapeRenderer.end();
+
+    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+    shapeRenderer.rect(winBox.getX(), winBox.getY(), winBox.getWidth(), winBox.getHeight());
+    shapeRenderer.end();
 
     /*input*/
     if (Gdx.input.isTouched())
@@ -119,15 +140,31 @@ public class GameScreen implements Screen
                 .MOVE_DISTANCE && Math.abs(touchPos.y - points.peek().y) <= Constants.MOVE_DISTANCE) points.add(touchPos);
       }
 
+      // Key Collision
       if (player.getLineBox().overlaps(keyBox) && !keyAdded)
       {
         player.addKey();
         keyAdded = true;
       }
       if (player.getPlayerBox().overlaps(keyBox) && !keyTaken) keyTaken = true;
+
+      // Treasure Collision
+      if (player.getLineBox().overlaps(treasureBox) && !treasureAdded)
+      {
+        player.addTreasure();
+        treasureAdded = true;
+      }
+      if (player.getPlayerBox().overlaps(treasureBox) && !treasureTaken) treasureTaken = true;
+
+      // Win Collision
+      if (player.getPlayerBox().overlaps(winBox) && !player.hasWon() && player.getTreasure() > 0)
+      {
+        player.win();
+        System.out.println("WIN!");
+      }
     }
 
-    /*render line*/
+    // Render Line
     if (points.size > 0)
     {
       Vector3[] pointsArray = points.toArray(Vector3.class);
@@ -175,7 +212,7 @@ public class GameScreen implements Screen
   @Override
   public void dispose()
   {
-    sprite.dispose();
+    keySprite.dispose();
     map.dispose();
     renderer.dispose();
     player.getRenderer().dispose();

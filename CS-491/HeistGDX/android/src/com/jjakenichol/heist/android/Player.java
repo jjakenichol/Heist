@@ -21,12 +21,14 @@ public class Player
   private Vector3 position = new Vector3(0, 0, 0);
   private Vector3 linePosition = new Vector3(0, 0, 0);
   private float size = 8;
-  private Rectangle playerBox = new Rectangle(position.x - 30 / 2, position.y - 30 / 2, 30, 30);
+  private Rectangle playerBox = new Rectangle(position.x - size / 2, position.y - size / 2, size, size);
   private Rectangle lineBox = new Rectangle(linePosition.x - size / 2, linePosition.y - size / 2, size, size);
 
   private ShapeRenderer renderer = new ShapeRenderer();
 
   private int keys = 0;
+  private int treasure = 0;
+  private boolean hasWon = false;
 
   public Player(Sprite sprite, Vector3 position, Vector3 linePosition)
   {
@@ -66,6 +68,26 @@ public class Player
   public void removeKey()
   {
     this.keys--;
+  }
+
+  public int getTreasure()
+  {
+    return this.treasure;
+  }
+
+  public void addTreasure()
+  {
+    this.treasure++;
+  }
+
+  public void win()
+  {
+    this.hasWon = true;
+  }
+
+  public boolean hasWon()
+  {
+    return this.hasWon;
   }
 
   public Sprite getSprite()
