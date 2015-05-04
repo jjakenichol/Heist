@@ -49,7 +49,7 @@ public class Player
 
   public void update(float delta, CatmullRomSpline<Vector3> catmull, Array<Vector3> array)
   {
-    if (System.currentTimeMillis() % 15 == 0)
+    if (System.currentTimeMillis() % 5 == 0)
     {
       position = catmull.controlPoints[0];
       if (array.size > 1) array.removeIndex(0);

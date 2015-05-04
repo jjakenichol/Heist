@@ -113,15 +113,16 @@ public class GameScreen implements Screen
       Vector3 touchPos = new Vector3();
       touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
       camera.unproject(touchPos);
-      touchPos.set(touchPos.x / Constants.UNIT_SCALE, touchPos.y / Constants.UNIT_SCALE, touchPos.z / Constants.UNIT_SCALE);
+//      touchPos.set(touchPos.x / Constants.UNIT_SCALE, touchPos.y / Constants.UNIT_SCALE, touchPos.z / Constants.UNIT_SCALE);
+//      touchPos.set(touchPos.x, touchPos.y, touchPos.z);
 
       TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Walls");
       TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
 
       try
       {
-        cell = collisionLayer.getCell((int) (touchPos.x / collisionLayer.getTileWidth()),
-                (int) (touchPos.y / collisionLayer.getTileHeight()));
+        cell = collisionLayer.getCell((int) (touchPos.x / Constants.UNIT_SCALE / collisionLayer.getTileWidth()),
+                (int) (touchPos.y / Constants.UNIT_SCALE / collisionLayer.getTileHeight()));
       } catch (Exception e)
       {
         e.printStackTrace();
