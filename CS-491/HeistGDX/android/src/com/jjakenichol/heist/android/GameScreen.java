@@ -28,7 +28,6 @@ public class GameScreen implements Screen
 
   private TiledMap map;
   private OrthogonalTiledMapRenderer renderer;
-  private float unitScale = Gdx.graphics.getDensity();
   private Player player;
 
   private Array<Vector3> points = new Array<>();
@@ -66,7 +65,7 @@ public class GameScreen implements Screen
   {
     map = new TmxMapLoader().load("maps/map.tmx");
 
-    renderer = new OrthogonalTiledMapRenderer(map);
+    renderer = new OrthogonalTiledMapRenderer(map, Constants.UNIT_SCALE);
 
     player = new Player(new Sprite(new Texture("img/droplet.png")), new Vector3(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0),
             points.peek());
@@ -104,9 +103,9 @@ public class GameScreen implements Screen
 //            player.getPlayerBox().getHeight());
 //    shapeRenderer.end();
 
-    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-    shapeRenderer.rect(winBox.getX(), winBox.getY(), winBox.getWidth(), winBox.getHeight());
-    shapeRenderer.end();
+//    shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//    shapeRenderer.rect(winBox.getX(), winBox.getY(), winBox.getWidth(), winBox.getHeight());
+//    shapeRenderer.end();
 
     /*input*/
     if (Gdx.input.isTouched())
@@ -114,6 +113,7 @@ public class GameScreen implements Screen
       Vector3 touchPos = new Vector3();
       touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
       camera.unproject(touchPos);
+      touchPos.set(touchPos.x / Constants.UNIT_SCALE, touchPos.y / Constants.UNIT_SCALE, touchPos.z / Constants.UNIT_SCALE);
 
       TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("Walls");
       TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
