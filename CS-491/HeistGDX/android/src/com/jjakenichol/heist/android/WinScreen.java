@@ -47,7 +47,6 @@ public class WinScreen implements Screen
     font.draw(game.batch, "Completed in " + Integer.toString((int) game.playTime) + " seconds", Gdx.graphics.getWidth() / 2 - 90,
             Gdx.graphics.getHeight() / 2 - 50);
     game.batch.end();
-
   }
 
   @Override

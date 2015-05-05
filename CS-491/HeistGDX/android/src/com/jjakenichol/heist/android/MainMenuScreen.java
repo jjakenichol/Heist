@@ -17,7 +17,7 @@ public class MainMenuScreen implements Screen
 
   private Texture titleScreen;
 
-  public MainMenuScreen(final Heist game)
+  public MainMenuScreen(Heist game)
   {
     this.game = game;
 

@@ -24,7 +24,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class GameScreen implements Screen
 {
-  private Heist game;
+  private final Heist game;
   private OrthographicCamera camera;
 
   private TiledMap map;
@@ -50,7 +50,7 @@ public class GameScreen implements Screen
   private Rectangle winBox = new Rectangle(4 * 16 * Constants.UNIT_SCALE, Gdx.graphics.getHeight() - (48 * Constants.UNIT_SCALE),
           32 * Constants.UNIT_SCALE, 48 * Constants.UNIT_SCALE);
 
-  public GameScreen(final Heist game)
+  public GameScreen(Heist game)
   {
     this.game = game;
 
@@ -169,8 +169,6 @@ public class GameScreen implements Screen
     // Win Collision
     if (player.getPlayerBox().overlaps(winBox) && !player.hasWon() && player.getTreasure() > 0)
     {
-//      player.win();
-      System.out.println("WIN!");
       game.setScreen(new WinScreen(game));
       dispose();
     }
@@ -223,6 +221,7 @@ public class GameScreen implements Screen
   @Override
   public void dispose()
   {
+    font.dispose();
     shapeRenderer.dispose();
     keySprite.dispose();
     treasureSprite.dispose();
