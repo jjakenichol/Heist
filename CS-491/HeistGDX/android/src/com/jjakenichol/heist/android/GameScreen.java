@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -32,6 +33,7 @@ public class GameScreen implements Screen
 
   private Array<Vector3> points = new Array<>();
   private ShapeRenderer shapeRenderer = new ShapeRenderer();
+  private BitmapFont font;
 
   private Texture keySprite;
   private Vector2 keyPos = new Vector2(400, 280);
@@ -54,6 +56,8 @@ public class GameScreen implements Screen
 
     keySprite = new Texture(Gdx.files.internal("img/Key_Sprite.png"));
     treasureSprite = new Texture(Gdx.files.internal("img/ALttP_Treasure_Chest_2.png"));
+    font = new BitmapFont();
+    font.setColor(Color.OLIVE);
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -84,6 +88,11 @@ public class GameScreen implements Screen
     camera.update();
 
     game.batch.setProjectionMatrix(camera.combined);
+
+    game.playTime += delta;
+    game.batch.begin();
+    font.draw(game.batch, Integer.toString((int) game.playTime), 32, 32);
+    game.batch.end();
 
     if (!keyTaken)
     {

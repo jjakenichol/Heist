@@ -26,8 +26,8 @@ public class Player
 
   private ShapeRenderer renderer = new ShapeRenderer();
 
-  private int keys = 1;
-  private int treasure = 1;
+  private int keys = 0;
+  private int treasure = 0;
   private boolean hasWon = false;
 
   public Player(Sprite sprite, Vector3 position, Vector3 linePosition)

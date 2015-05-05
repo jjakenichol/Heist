@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">HeistGDX</string>
+    <string name="app_name">Heist</string>
     <string name="title_activity_win_screen">WinScreen</string>
 
     <string name="hello_world">Hello world!</string>

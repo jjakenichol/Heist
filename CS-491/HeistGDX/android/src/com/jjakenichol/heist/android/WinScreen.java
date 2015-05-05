@@ -2,9 +2,11 @@ package com.jjakenichol.heist.android;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 /**
  * Created by JakeNichol on 5/4/15.
@@ -16,12 +18,15 @@ public class WinScreen implements Screen
   private OrthographicCamera camera;
 
   private Texture winScreen;
+  private BitmapFont font;
 
-  public WinScreen(final Heist game)
+  public WinScreen(Heist game)
   {
     this.game = game;
 
     winScreen = new Texture(Gdx.files.internal("img/winScreen.png"));
+    font = new BitmapFont();
+    font.setColor(Color.OLIVE);
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -39,7 +44,10 @@ public class WinScreen implements Screen
 
     game.batch.begin();
     game.batch.draw(winScreen, 0, 0);
+    font.draw(game.batch, "Completed in " + Integer.toString((int) game.playTime) + " seconds", Gdx.graphics.getWidth() / 2 - 90,
+            Gdx.graphics.getHeight() / 2 - 50);
     game.batch.end();
+
   }
 
   @Override
@@ -77,6 +85,7 @@ public class WinScreen implements Screen
   @Override
   public void dispose()
   {
+    font.dispose();
     winScreen.dispose();
   }
 }

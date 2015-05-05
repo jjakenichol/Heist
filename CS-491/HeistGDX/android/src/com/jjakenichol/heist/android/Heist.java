@@ -11,6 +11,7 @@ public class Heist extends Game
 {
   public SpriteBatch batch;
   public BitmapFont font;
+  public float playTime = 0.0f;
 
   public void create()
   {

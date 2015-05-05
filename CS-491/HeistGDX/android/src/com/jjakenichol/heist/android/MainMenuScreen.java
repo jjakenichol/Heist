@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 
 /**
  * Created by JakeNichol on 4/18/15.
@@ -14,9 +15,13 @@ public class MainMenuScreen implements Screen
 
   private OrthographicCamera camera;
 
+  private Texture titleScreen;
+
   public MainMenuScreen(final Heist game)
   {
     this.game = game;
+
+    titleScreen = new Texture(Gdx.files.internal("img/titleScreen.png"));
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -32,8 +37,7 @@ public class MainMenuScreen implements Screen
     game.batch.setProjectionMatrix(camera.combined);
 
     game.batch.begin();
-    game.font.draw(game.batch, "Welcome to Heist!", 200, 350);
-    game.font.draw(game.batch, "Tap anywhere to begin", 200, 300);
+    game.batch.draw(titleScreen, 0, 0);
     game.batch.end();
 
     if (Gdx.input.isTouched())
