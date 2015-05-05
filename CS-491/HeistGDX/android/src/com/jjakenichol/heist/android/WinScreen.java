@@ -4,19 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 
 /**
- * Created by JakeNichol on 4/18/15.
+ * Created by JakeNichol on 5/4/15.
  */
-public class MainMenuScreen implements Screen
+public class WinScreen implements Screen
 {
   private final Heist game;
 
   private OrthographicCamera camera;
 
-  public MainMenuScreen(final Heist game)
+  private Texture winScreen;
+
+  public WinScreen(final Heist game)
   {
     this.game = game;
+
+    winScreen = new Texture(Gdx.files.internal("img/winScreen.png"));
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -29,18 +34,12 @@ public class MainMenuScreen implements Screen
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     camera.update();
+
     game.batch.setProjectionMatrix(camera.combined);
 
     game.batch.begin();
-    game.font.draw(game.batch, "Welcome to Heist!", 200, 350);
-    game.font.draw(game.batch, "Tap anywhere to begin", 200, 300);
+    game.batch.draw(winScreen, 0, 0);
     game.batch.end();
-
-    if (Gdx.input.isTouched())
-    {
-      game.setScreen(new GameScreen(game));
-      dispose();
-    }
   }
 
   @Override
@@ -52,7 +51,9 @@ public class MainMenuScreen implements Screen
   @Override
   public void resize(int width, int height)
   {
-
+    camera.viewportWidth = width;
+    camera.viewportHeight = height;
+    camera.update();
   }
 
   @Override
@@ -76,6 +77,6 @@ public class MainMenuScreen implements Screen
   @Override
   public void dispose()
   {
-
+    winScreen.dispose();
   }
 }

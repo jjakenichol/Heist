@@ -2,5 +2,9 @@
 <resources>
 
     <string name="app_name">HeistGDX</string>
+    <string name="title_activity_win_screen">WinScreen</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
